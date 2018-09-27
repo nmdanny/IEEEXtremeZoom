@@ -1,26 +1,23 @@
 #include "Letter.h"
+#include <fstream>
 
-#include <iostream>
+void print_sample_input() {
+	LettersAlg alg;
+	std::ifstream input("sample_input.txt");
+	assert(input.good());
+	input >> alg;
+	auto output = alg.run(input);
+	std::cout << "Output:\n---------------\n" << output << "---------------";
 
-// Macro so that we don't print debug stuff/instructions while running through hackerrank
-
+}
 
 int main(int argc, char **argv) {
+	print_sample_input();
+	/*
 	LettersAlg alg;
 	std::cin >> alg;
-
-	std::cout << "Type the number of lines to zoom:" << std::endl;
-	int inputLines;
-	std::cin >> inputLines;
-	std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-	std::cout << "Will be reading " << inputLines << " lines." << std::endl;
-	for (auto i = 0; i < inputLines; i++) {
-
-		std::cout << "Type the string to zoom: ";
-		std::string stringToZoom;
-		std::getline(std::cin, stringToZoom);
-		std::cout << alg.zoomed_string(stringToZoom) << std::endl;
-	}
-	std::cout << "Done." << std::endl;
+	auto output = alg.run(std::cin);
+	std::cout << output;
+	*/
 	return 0;
 }

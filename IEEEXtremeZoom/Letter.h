@@ -8,6 +8,11 @@
 #include <string>
 #include <assert.h>
 
+// Ignores all remaining input until reaching a newline, discarding it.
+inline std::istream& ignore_newline(std::istream& is) {
+	is.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+	return is;
+}
 
 class Letter
 {
@@ -28,32 +33,21 @@ public:
 	char& index(int row, int col) {
 		return zoomed[row * columns + col];
 	}
+
 };
 
-std::ostream& operator<<(std::ostream& os, Letter& letter) {
-	os << "Letter '" << letter.character << "'" << std::endl;
-	for (auto rowIx = 0; rowIx < letter.rows; rowIx++) {
-		auto lineStart = letter.zoomed.cbegin() + rowIx * letter.columns;
-		auto lineEnd = lineStart + letter.columns;
-		std::string line(lineStart, lineEnd);
-		os << line << std::endl;
-	}
-	return os;
-}
-
 std::istream& operator>>(std::istream& is, Letter& letter) {
-	std::cout << "Type a character" << std::endl;
+	//std::cout << "Type a character" << std::endl;
 	std::string blank;
-	is >> letter.character;
-	std::getline(is, blank);
-	std::cout << "Type the zoomed representation of " << letter.character <<  std::endl;
+	is >> letter.character >> ignore_newline;
+	//std::cout << "Type the zoomed representation of " << letter.character <<  std::endl;
 	for (auto rowIx = 0; rowIx < letter.rows; rowIx++) {
 		std::string currentLine;
 		std::getline(is, currentLine);
 		assert(currentLine.size() == letter.columns);
 		std::copy(currentLine.cbegin(), currentLine.cend(), letter.zoomed.begin() + rowIx * letter.columns);
 	}
-	std::cout << "Got the following letter: " << letter;
+	//std::cout << "Got the following letter: " << letter;
 
 	return is;
 }
@@ -89,14 +83,30 @@ public:
 		}
 		return outs.str();
 	}
+
+	std::string run(std::istream& in) {
+		//std::cout << "Type the number of lines to zoom:" << std::endl;
+		int inputLines;
+		in >> inputLines >> ignore_newline;
+		//std::cout << "Will be reading " << inputLines << " lines." << std::endl;
+		std::stringstream out;
+		for (auto i = 0; i < inputLines; i++) {
+
+			//std::cout << "Type the string to zoom: ";
+			std::string stringToZoom;
+			std::getline(in, stringToZoom);
+			out << zoomed_string(stringToZoom) << std::endl;
+		}
+		return out.str();
+	}
 };
 
 std::istream& operator>>(std::istream& is, LettersAlg& alg) {
-	std::cout << "Type the columns, rows and number of translated characters" << std::endl;
+	//std::cout << "Type the columns, rows and number of translated characters" << std::endl;
 	is >> alg.columns;
 	is >> alg.rows;
 	is >> alg.translated_characters;
-	std::cout << alg.columns << " columns, " << alg.rows << " rows, " << alg.translated_characters << " characters." << std::endl;
+	//std::cout << alg.columns << " columns, " << alg.rows << " rows, " << alg.translated_characters << " characters." << std::endl;
 	for (auto i = 0; i < alg.translated_characters; i++) {
 		Letter letter(alg.rows, alg.columns);
 		is >> letter;
@@ -105,9 +115,3 @@ std::istream& operator>>(std::istream& is, LettersAlg& alg) {
 	return is;
 }
 
-
-std::istream& read_blank_line(std::istream& is) {
-	std::string blank;
-	is >> blank;
-	return is;
-}
